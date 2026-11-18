@@ -1,0 +1,24 @@
+{
+  "name": "caio-ruas-portfolio",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/tailwind": "^5.1.0",
+    "astro": "^4.16.0",
+    "katex": "^0.16.11",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0",
+    "tailwindcss": "^3.4.14"
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.15",
+    "typescript": "^5.6.3"
+  }
+}

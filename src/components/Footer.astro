@@ -1,0 +1,54 @@
+---
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="mt-24 border-t-2 border-ink dark:border-ink-chalk bg-paper-light/90 dark:bg-ink-nightCard/90">
+  <div class="h-2 w-full crosshatch-pattern border-b border-ink/30 dark:border-ink-chalk/30"></div>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col md:flex-row items-center justify-between gap-6">
+    <div class="flex flex-col items-center md:items-start gap-1">
+      <p class="font-serif text-lg font-bold tracking-tight">
+        Caio Marcelo Cavallari Ruas
+      </p>
+      <p class="text-xs font-mono text-ink-muted dark:text-ink-chalk/70">
+        Ilum — Escola de Ciência (CNPEM) &bull; IASC / Caça Asteroides MCTI &bull; Campinas, SP
+      </p>
+    </div>
+
+    <div class="flex flex-wrap items-center justify-center gap-4 text-xs font-mono">
+      <a
+        href="https://github.com/CaioRuas24010"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="underline decoration-1 underline-offset-4 hover:bg-ink hover:text-paper dark:hover:bg-ink-chalk dark:hover:text-ink-night px-1.5 py-0.5 transition-colors"
+      >
+        GitHub
+      </a>
+      <span>/</span>
+      <a
+        href="https://orcid.org/0009-0009-4474-1672"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="underline decoration-1 underline-offset-4 hover:bg-ink hover:text-paper dark:hover:bg-ink-chalk dark:hover:text-ink-night px-1.5 py-0.5 transition-colors"
+      >
+        ORCID: 0009-0009-4474-1672
+      </a>
+      <span>/</span>
+      <a
+        href="http://lattes.cnpq.br/4924298812121535"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="underline decoration-1 underline-offset-4 hover:bg-ink hover:text-paper dark:hover:bg-ink-chalk dark:hover:text-ink-night px-1.5 py-0.5 transition-colors"
+      >
+        Lattes CNPq
+      </a>
+      <span>/</span>
+      <a
+        href="mailto:caio24010@ilum.cnpem.br"
+        class="underline decoration-1 underline-offset-4 hover:bg-ink hover:text-paper dark:hover:bg-ink-chalk dark:hover:text-ink-night px-1.5 py-0.5 transition-colors"
+      >
+        caio24010@ilum.cnpem.br
+      </a>
+      <span class="text-ink-faint">&bull; {currentYear}</span>
+    </div>
+  </div>
+</footer>

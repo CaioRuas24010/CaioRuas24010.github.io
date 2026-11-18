@@ -1,0 +1,19 @@
+---
+import katex from 'katex';
+
+interface Props {
+  math: string;
+  block?: boolean;
+  className?: string;
+}
+
+const { math, block = false, className = '' } = Astro.props;
+
+const html = katex.renderToString(math, {
+  displayMode: block,
+  throwOnError: false,
+  strict: false,
+});
+---
+
+<span class:list={[block ? 'block my-3 overflow-x-auto py-1' : 'inline', className]} set:html={html} />

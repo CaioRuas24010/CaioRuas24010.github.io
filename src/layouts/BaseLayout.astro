@@ -1,0 +1,353 @@
+---
+import { ViewTransitions } from 'astro:transitions';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import InteractiveBackground from '../components/InteractiveBackground.astro';
+import 'katex/dist/katex.min.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = 'Portfólio Acadêmico e de Projetos de Caio Marcelo Cavallari Ruas (Caio Cavallari Ruas) — Ilum Escola de Ciência (CNPEM). Física de Materiais, Matemática Aplicada, Hackathons, GitHub e Ciência Cidadã.',
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://caioruas24010.github.io');
+const socialImageURL = new URL('/foto-perfil.jpg', Astro.site || 'https://caioruas24010.github.io');
+
+const personJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Caio Marcelo Cavallari Ruas',
+  alternateName: [
+    'Caio Cavallari Ruas',
+    'Caio Ruas',
+    'Caio M. C. Ruas',
+    'CaioRuas24010',
+  ],
+  url: 'https://caioruas24010.github.io',
+  image: socialImageURL.toString(),
+  email: 'mailto:caio24010@ilum.cnpem.br',
+  jobTitle: 'Bacharelando em Ciência e Tecnologia & Treinador Oficial IASC / Caça Asteroides MCTI',
+  affiliation: [
+    {
+      '@type': 'CollegeOrUniversity',
+      name: 'Ilum Escola de Ciência — CNPEM',
+      url: 'https://ilum.cnpem.br',
+    },
+    {
+      '@type': 'ResearchOrganization',
+      name: 'Centro Nacional de Pesquisa em Energia e Materiais (CNPEM)',
+      url: 'https://cnpem.br',
+    },
+  ],
+  sameAs: [
+    'https://github.com/CaioRuas24010',
+    'https://orcid.org/0009-0009-4474-1672',
+    'http://lattes.cnpq.br/4924298812121535',
+  ],
+  knowsAbout: [
+    'Física de Materiais',
+    'Óxido de Grafeno',
+    'Espaços Normados',
+    'Teoria dos Grafos',
+    'Computação Científica',
+    'Inteligência Artificial',
+    'Astronomia e Ciência Cidadã',
+  ],
+};
+---
+
+<!doctype html>
+<html lang="pt-BR" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonicalURL} />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Primary SEO Meta Tags -->
+    <title>{title} — Caio Marcelo Cavallari Ruas (Caio Ruas)</title>
+    <meta name="title" content={`${title} — Caio Marcelo Cavallari Ruas (Caio Ruas)`} />
+    <meta name="description" content={description} />
+    <meta name="author" content="Caio Marcelo Cavallari Ruas" />
+    <meta
+      name="keywords"
+      content="Caio Marcelo Cavallari Ruas, Caio Cavallari Ruas, Caio Ruas, CaioRuas24010, Caio Ruas GitHub, Ilum Escola de Ciência, CNPEM, Física de Materiais, Espaços Normados, IASC Caça Asteroides, Portfólio Acadêmico"
+    />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph / WhatsApp / LinkedIn -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:site_name" content="Caio Marcelo Cavallari Ruas — Portfólio & Súmula" />
+    <meta property="og:title" content={`${title} — Caio Marcelo Cavallari Ruas`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={socialImageURL} />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:locale:alternate" content="en_US" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonicalURL} />
+    <meta name="twitter:title" content={`${title} — Caio Marcelo Cavallari Ruas`} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImageURL} />
+
+    <!-- Schema.org JSON-LD (Google Knowledge Graph for Person + GitHub/ORCID/Lattes) -->
+    <script type="application/ld+json" set:html={JSON.stringify(personJsonLd)} />
+
+    <!-- Google Fonts: Cormorant Garamond (Engraving Serif), Plus Jakarta Sans & Space Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Astro View Transitions -->
+    <ViewTransitions />
+
+    <!-- Theme & Language initialization (runs immediately to avoid FOUC and persists across View Transitions) -->
+    <script is:inline>
+      function applyPreferences() {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+        const savedLang = localStorage.getItem('lang') || 'pt';
+        document.documentElement.setAttribute('data-lang', savedLang);
+        document.documentElement.setAttribute('lang', savedLang === 'en' ? 'en' : 'pt-BR');
+      }
+      applyPreferences();
+      document.addEventListener('astro:after-swap', applyPreferences);
+    </script>
+
+    <style is:global>
+      /* Bilingual Instant Toggle Rules (PT-BR / EN) */
+      html:not([data-lang="en"]) .lang-en {
+        display: none !important;
+      }
+      html[data-lang="en"] .lang-pt {
+        display: none !important;
+      }
+
+      :root {
+        --ink: #121211;
+        --ink-soft: rgba(18, 18, 17, 0.22);
+        --ink-hatch: rgba(18, 18, 17, 0.16);
+        --ink-hatch-strong: rgba(18, 18, 17, 0.35);
+        --paper: #f6f3ec;
+        --paper-card: #fbf9f5;
+      }
+
+      .dark {
+        --ink: #f2efe9;
+        --ink-soft: rgba(242, 239, 233, 0.22);
+        --ink-hatch: rgba(242, 239, 233, 0.14);
+        --ink-hatch-strong: rgba(242, 239, 233, 0.32);
+        --paper: #0e0e0d;
+        --paper-card: #151513;
+      }
+
+      /* View Transitions */
+      @keyframes inkFadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes inkFadeOut {
+        from {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        to {
+          opacity: 0;
+          transform: translateY(-6px);
+        }
+      }
+
+      ::view-transition-old(root) {
+        animation: 180ms ease-in both inkFadeOut;
+      }
+
+      ::view-transition-new(root) {
+        animation: 280ms ease-out both inkFadeIn;
+      }
+
+      /* Nanquim & Hachura (Crosshatching) Utility Classes */
+      .hatch-diagonal {
+        background-image: repeating-linear-gradient(
+          -45deg,
+          var(--ink-hatch) 0px,
+          var(--ink-hatch) 1px,
+          transparent 1px,
+          transparent 6px
+        );
+      }
+
+      .hatch-dense {
+        background-image: repeating-linear-gradient(
+          -45deg,
+          var(--ink-hatch-strong) 0px,
+          var(--ink-hatch-strong) 1px,
+          transparent 1px,
+          transparent 4px
+        );
+      }
+
+      .crosshatch-pattern {
+        background-image:
+          repeating-linear-gradient(
+            45deg,
+            var(--ink-hatch) 0px,
+            var(--ink-hatch) 1px,
+            transparent 1px,
+            transparent 7px
+          ),
+          repeating-linear-gradient(
+            -45deg,
+            var(--ink-hatch) 0px,
+            var(--ink-hatch) 1px,
+            transparent 1px,
+            transparent 7px
+          );
+      }
+
+      .stipple-pattern {
+        background-image: radial-gradient(var(--ink-Soft, rgba(18, 18, 17, 0.25)) 1px, transparent 1px);
+        background-size: 8px 8px;
+      }
+
+      /* Ink Card with Crosshatched Offset Shadow (never covers card text) */
+      .ink-card {
+        position: relative;
+        isolation: isolate;
+        background-color: transparent;
+        border: 1.5px solid var(--ink);
+        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      /* Solid opaque paper layer directly behind content */
+      .ink-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background-color: var(--paper-card);
+        pointer-events: none;
+      }
+
+      /* Crosshatched shadow layer behind the solid paper layer */
+      .ink-card::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -2;
+        transform: translate(6px, 6px);
+        border: 1px solid var(--ink);
+        background-color: var(--paper);
+        background-image: repeating-linear-gradient(
+          -45deg,
+          var(--ink-hatch-strong) 0px,
+          var(--ink-hatch-strong) 1.2px,
+          transparent 1.2px,
+          transparent 4.5px
+        );
+        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        pointer-events: none;
+      }
+
+      .ink-card:hover {
+        transform: translate(-2px, -2px);
+      }
+
+      .ink-card:hover::after {
+        transform: translate(10px, 10px);
+      }
+
+      /* Ink Button with solid/hatched offset */
+      .ink-btn {
+        position: relative;
+        border: 1.5px solid var(--ink);
+        background-color: var(--paper-card);
+        color: var(--ink);
+        transition: all 0.2s ease;
+      }
+
+      .ink-btn:hover {
+        background-color: var(--ink);
+        color: var(--paper);
+        transform: translate(-1px, -1px);
+        box-shadow: 4px 4px 0px var(--ink-hatch-strong);
+      }
+
+      .ink-btn-primary {
+        position: relative;
+        border: 1.5px solid var(--ink);
+        background-color: var(--ink);
+        color: var(--paper);
+        transition: all 0.2s ease;
+      }
+
+      .ink-btn-primary:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 5px 5px 0px var(--ink-hatch-strong);
+      }
+
+      /* Double-line engraving rule */
+      .ink-rule-double {
+        border-top: 2px solid var(--ink);
+        border-bottom: 1px solid var(--ink);
+        height: 5px;
+      }
+
+      /* KaTeX color inheritance */
+      .katex {
+        color: inherit !important;
+        font-size: 1.05em;
+      }
+      .katex-display {
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 0.35rem 0;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen flex flex-col bg-paper text-ink dark:bg-ink-night dark:text-ink-chalk font-sans selection:bg-ink selection:text-paper dark:selection:bg-ink-chalk dark:selection:text-ink-night antialiased transition-colors duration-300">
+    <!-- Reusable SVG Hatching Patterns for Line-Art Illustrations -->
+    <svg class="hidden" width="0" height="0" aria-hidden="true">
+      <defs>
+        <pattern id="svg-hatch-45" width="6" height="6" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="0" x2="0" y2="6" stroke="currentColor" stroke-width="1" stroke-opacity="0.35" />
+        </pattern>
+        <pattern id="svg-hatch-dense" width="4" height="4" patternTransform="rotate(-45 0 0)" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="0" x2="0" y2="4" stroke="currentColor" stroke-width="1.2" stroke-opacity="0.5" />
+        </pattern>
+        <pattern id="svg-crosshatch" width="6" height="6" patternUnits="userSpaceOnUse">
+          <path d="M 0,6 L 6,0 M -1,1 L 1,-1 M 5,7 L 7,5" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.3" />
+          <path d="M 0,0 L 6,6 M -1,5 L 1,7 M 5,-1 L 7,1" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.3" />
+        </pattern>
+      </defs>
+    </svg>
+
+    <InteractiveBackground />
+    <Navbar />
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
