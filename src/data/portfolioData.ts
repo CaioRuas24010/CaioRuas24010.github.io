@@ -1,3 +1,21 @@
+import type { ImageMetadata } from 'astro';
+import fireflyLensImg from '../assets/projects/firefly-lens.png';
+import viuAiImg from '../assets/projects/viu-ai.jpg';
+import naoESoRetaImg from '../assets/projects/nao-e-so-reta.png';
+import cajuImg from '../assets/projects/caju.png';
+import seiHubImg from '../assets/projects/sei-hub.svg';
+import moleculeLabImg from '../assets/projects/molecule-lab.png';
+
+/**
+ * Compute responsive raster widths for `<Picture />` without upscaling.
+ */
+export function getProjectWidths(img: { width: number }): number[] {
+  const maxWidth = Math.min(1080, img.width);
+  const widths = [400, 720].filter((w) => w < maxWidth);
+  widths.push(maxWidth);
+  return widths;
+}
+
 export interface Publication {
   id: string;
   plateNumber: string;
@@ -39,7 +57,7 @@ export interface Project {
   description: string;
   descriptionEn: string;
   equation?: string;
-  image?: string;
+  image?: ImageMetadata;
   tech: string[];
   repoUrl: string;
   liveUrl?: string;
@@ -265,7 +283,7 @@ export const projects: Project[] = [
       'MODIS (1 km) and VIIRS (375 m) active-fire detections harmonized onto a single physical scale (MODIS Aqua scale) and visualized as a 3D calendar of fire activity across South America (2002–2026). Built for the NASA Space Apps Challenge.',
     equation:
       '\\hat{N}_{\\text{MODIS}}(t) = \\mathcal{H}_{\\theta}\\!\\left(N_{\\text{VIIRS}}(t),\\, N_{\\text{Aqua}}(t)\\right), \\quad \\text{bias: } 506\\% \\to <1\\%',
-    image: '/projects/firefly-lens.png',
+    image: fireflyLensImg,
     tech: ['NASA MODIS & VIIRS', 'Harmonização Estatística', 'Visualização 3D', 'TypeScript'],
     repoUrl: 'https://github.com/ThallesCansi/firefly-lens',
     liveUrl: 'https://firefly-lens.vercel.app',
@@ -291,7 +309,7 @@ export const projects: Project[] = [
       'Closed-loop autonomous AI agent capable of monitoring internal and external market signals, detecting anomalies, investigating evidence, formulating hypotheses, and preparing voice-enabled Decision Rooms. 1st Place winner at Hack2L (Unicamp / Canastra Ventures).',
     equation:
       '\\text{Signals} \\longrightarrow \\text{Detect} \\longrightarrow \\text{Investigate} \\longrightarrow \\text{Decide} \\longrightarrow \\text{Learn}',
-    image: '/projects/viu-ai.jpg',
+    image: viuAiImg,
     tech: ['React 19', 'Open Agent Loops', 'Featherless AI', 'ElevenLabs', 'TypeScript'],
     repoUrl: 'https://github.com/ThallesCansi/viu-ai',
     liveUrl: 'https://hackathons.canastra.ventures/projects/viu-ai-capithon',
@@ -317,7 +335,7 @@ export const projects: Project[] = [
       'Interactive Streamlit + OSMnx + NetworkX application comparing intrinsic road network distance (shortest path on OpenStreetMap graphs) against extrinsic L1, L2, L∞, and Lp norm metrics, including tortuosity indices and empirical p-calibration in Barão Geraldo (Campinas/SP).',
     equation:
       '\\|\\mathbf{x} - \\mathbf{y}\\|_p = \\left(\\sum_{i=1}^2 |x_i - y_i|^p\\right)^{\\!1/p} \\;\\text{vs.}\\; d_G(u,v)',
-    image: '/projects/nao-e-so-reta.png',
+    image: naoESoRetaImg,
     tech: ['Streamlit', 'OSMnx / NetworkX', 'Folium', 'Espaços Normados', 'Python'],
     repoUrl: 'https://github.com/ThallesCansi/nao-e-so-reta',
     liveUrl: 'https://naoesoreta.streamlit.app/',
@@ -341,7 +359,7 @@ export const projects: Project[] = [
       'Jogo educativo e experiência narrativa interativa em React premiada com o People’s Choice Award no NASA International Space Apps Challenge, guiando o jogador por missões ambientais sobre água, fogo, solo e atmosfera através de dados de observação da Terra.',
     descriptionEn:
       'Educational game and interactive narrative experience built with React, awarded the People’s Choice Award at the NASA International Space Apps Challenge. Guides players through environmental missions covering water, fire, soil, and atmosphere using Earth observation data.',
-    image: '/projects/caju.png',
+    image: cajuImg,
     tech: ['React', 'Game Design Educativo', 'NASA Earth Data', 'Storytelling'],
     repoUrl: 'https://github.com/ThallesCansi/caju',
     highlight: 'People’s Choice — NASA Space Apps 2024',
@@ -364,7 +382,7 @@ export const projects: Project[] = [
       'Plataforma web para a comunidade estudantil da Ilum centralizando mural de postagens (eventos, materiais, estágios), calendário integrado, biblioteca visual de disciplinas, perfis via Supabase e espaços do Centro Acadêmico e Atlética.',
     descriptionEn:
       'Web platform for the Ilum student community centralizing announcement boards (events, study materials, internships), an integrated calendar, visual course library, Supabase user profiles, and spaces for the Student Union and Athletics.',
-    image: '/projects/sei-hub.svg',
+    image: seiHubImg,
     tech: ['React 18', 'TypeScript', 'Tailwind CSS', 'Supabase', 'Playwright'],
     repoUrl: 'https://github.com/ThallesCansi/sei-hub',
     highlight: 'Comunidade Ilum',
@@ -389,7 +407,7 @@ export const projects: Project[] = [
       'Interactive science outreach web app built for kiosks and tablets at CNPEM Open Science and Ilum Open Doors: allows visitors to build molecules on a 2D canvas with real valence rules and simulate their thermal stability in real time via Server-Sent Events (SSE).',
     equation:
       '\\langle E_k \\rangle = \\frac{1}{2} m \\langle v^2 \\rangle = \\frac{d}{2} k_B T',
-    image: '/projects/molecule-lab.png',
+    image: moleculeLabImg,
     tech: ['React 18', 'TypeScript', 'Canvas 2D', 'Server-Sent Events', 'Tailwind CSS'],
     repoUrl: 'https://github.com/ThallesCansi/molecule-lab-frontend',
     liveUrl: 'https://molecule-lab-frontend.vercel.app',

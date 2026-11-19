@@ -16,10 +16,16 @@
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    let animationFrameId: number;
+    let animationFrameId: number | null = null;
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
     let time = 0;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isTouchOrMobile =
+      window.matchMedia('(hover: none) and (pointer: coarse)').matches ||
+      window.innerWidth < 768;
+    const isStaticMode = isTouchOrMobile || prefersReducedMotion;
 
     const mouse = {
       x: -1000,
@@ -29,37 +35,12 @@
       radius: 210,
     };
 
-    const handleResize = () => {
-      if (!canvas) return;
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    };
-
-    const handleMouseMove = (e: MouseEvent) => {
-      mouse.targetX = e.clientX;
-      mouse.targetY = e.clientY;
-    };
-
-    const handleMouseLeave = () => {
-      mouse.targetX = -1000;
-      mouse.targetY = -1000;
-    };
-
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    window.addEventListener('mouseleave', handleMouseLeave);
-
-    const render = () => {
-      time += 0.006;
-      mouse.x += (mouse.targetX - mouse.x) * 0.12;
-      mouse.y += (mouse.targetY - mouse.y) * 0.12;
-
+    const drawField = (step: number, interactive: boolean) => {
       ctx.clearRect(0, 0, width, height);
 
       const isDark = document.documentElement.classList.contains('dark');
       const inkRGB = isDark ? '242, 239, 233' : '18, 18, 17';
 
-      const step = 36;
       const cols = Math.ceil(width / step) + 1;
       const rows = Math.ceil(height / step) + 1;
 
@@ -75,35 +56,37 @@
             Math.sin(x * 0.0035 + time) * Math.cos(y * 0.0035 - time * 0.7) * Math.PI * 0.85 +
             Math.PI * 0.25;
 
-          const dx = x - mouse.x;
-          const dy = y - mouse.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
           let angle = baseAngle;
           let strokeLen = 11;
           let alpha = isDark ? 0.11 : 0.13;
           let lineWidth = 0.85;
 
-          if (dist < mouse.radius) {
-            const influence = 1 - dist / mouse.radius;
-            // Swirl / dipole deflection around cursor
-            const cursorAngle = Math.atan2(dy, dx) + Math.PI / 2;
-            angle = baseAngle * (1 - influence * 0.65) + cursorAngle * (influence * 0.65);
-            strokeLen = 11 + influence * 9;
-            alpha = (isDark ? 0.12 : 0.14) + influence * 0.38;
-            lineWidth = 0.85 + influence * 0.75;
+          if (interactive) {
+            const dx = x - mouse.x;
+            const dy = y - mouse.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
 
-            // Secondary cross-hatching stroke (hachura cruzada) near the cursor!
-            if (influence > 0.22) {
-              const crossAngle = angle + Math.PI / 2.2;
-              const cx = Math.cos(crossAngle) * (strokeLen * 0.45);
-              const cy = Math.sin(crossAngle) * (strokeLen * 0.45);
-              ctx.beginPath();
-              ctx.strokeStyle = `rgba(${inkRGB}, ${(influence - 0.2) * 0.35})`;
-              ctx.lineWidth = 0.75;
-              ctx.moveTo(x - cx, y - cy);
-              ctx.lineTo(x + cx, y + cy);
-              ctx.stroke();
+            if (dist < mouse.radius) {
+              const influence = 1 - dist / mouse.radius;
+              // Swirl / dipole deflection around cursor
+              const cursorAngle = Math.atan2(dy, dx) + Math.PI / 2;
+              angle = baseAngle * (1 - influence * 0.65) + cursorAngle * (influence * 0.65);
+              strokeLen = 11 + influence * 9;
+              alpha = (isDark ? 0.12 : 0.14) + influence * 0.38;
+              lineWidth = 0.85 + influence * 0.75;
+
+              // Secondary cross-hatching stroke (hachura cruzada) near the cursor!
+              if (influence > 0.22) {
+                const crossAngle = angle + Math.PI / 2.2;
+                const cx = Math.cos(crossAngle) * (strokeLen * 0.45);
+                const cy = Math.sin(crossAngle) * (strokeLen * 0.45);
+                ctx.beginPath();
+                ctx.strokeStyle = `rgba(${inkRGB}, ${(influence - 0.2) * 0.35})`;
+                ctx.lineWidth = 0.75;
+                ctx.moveTo(x - cx, y - cy);
+                ctx.lineTo(x + cx, y + cy);
+                ctx.stroke();
+              }
             }
           }
 
@@ -118,19 +101,84 @@
           ctx.stroke();
         }
       }
+    };
 
+    const handleResize = () => {
+      if (!canvas) return;
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      if (isStaticMode) {
+        drawField(44, false);
+      }
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      mouse.targetX = e.clientX;
+      mouse.targetY = e.clientY;
+    };
+
+    const handleMouseLeave = () => {
+      mouse.targetX = -1000;
+      mouse.targetY = -1000;
+    };
+
+    const render = () => {
+      if (document.hidden) {
+        animationFrameId = null;
+        return;
+      }
+
+      time += 0.006;
+      mouse.x += (mouse.targetX - mouse.x) * 0.12;
+      mouse.y += (mouse.targetY - mouse.y) * 0.12;
+
+      drawField(36, true);
       animationFrameId = requestAnimationFrame(render);
     };
 
-    render();
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        if (animationFrameId !== null) {
+          cancelAnimationFrame(animationFrameId);
+          animationFrameId = null;
+        }
+      } else if (animationFrameId === null) {
+        animationFrameId = requestAnimationFrame(render);
+      }
+    };
+
+    let themeObserver: MutationObserver | null = null;
+
+    window.addEventListener('resize', handleResize);
+
+    if (isStaticMode) {
+      drawField(44, false);
+      themeObserver = new MutationObserver(() => {
+        drawField(44, false);
+      });
+      themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class'],
+      });
+    } else {
+      window.addEventListener('mousemove', handleMouseMove, { passive: true });
+      window.addEventListener('mouseleave', handleMouseLeave);
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+      render();
+    }
 
     document.addEventListener(
       'astro:before-swap',
       () => {
-        cancelAnimationFrame(animationFrameId);
+        if (animationFrameId !== null) {
+          cancelAnimationFrame(animationFrameId);
+          animationFrameId = null;
+        }
         window.removeEventListener('resize', handleResize);
         window.removeEventListener('mousemove', handleMouseMove);
         window.removeEventListener('mouseleave', handleMouseLeave);
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+        themeObserver?.disconnect();
       },
       { once: true }
     );

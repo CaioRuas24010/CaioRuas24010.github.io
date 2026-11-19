@@ -1,7 +1,8 @@
 ---
+import { Picture } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Katex from '../components/Katex.astro';
-import { projects } from '../data/portfolioData';
+import { projects, getProjectWidths } from '../data/portfolioData';
 
 const categories = [
   { id: 'todos', labelPt: 'Todos os Registros', labelEn: 'All Projects' },
@@ -97,12 +98,30 @@ const categories = [
               {project.image && (
                 <div class="mb-4 border-[1.5px] border-ink dark:border-ink-chalk bg-paper dark:bg-ink-night p-1.5 overflow-hidden">
                   <div class="relative aspect-video overflow-hidden border border-ink/40 dark:border-ink-chalk/40">
-                    <img
-                      src={project.image}
-                      alt={`Screenshot do projeto ${project.title}`}
-                      class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
-                      loading="lazy"
-                    />
+                    {project.image.format === 'svg' ? (
+                      <img
+                        src={project.image.src}
+                        width={project.image.width}
+                        height={project.image.height}
+                        alt={`Screenshot do projeto ${project.title}`}
+                        class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : (
+                      <Picture
+                        src={project.image}
+                        formats={['avif', 'webp']}
+                        widths={getProjectWidths(project.image)}
+                        sizes="(max-width: 767px) calc(100vw - 4.5rem), (max-width: 1152px) 46vw, 520px"
+                        quality={80}
+                        alt={`Screenshot do projeto ${project.title}`}
+                        pictureAttributes={{ class: 'block w-full h-full' }}
+                        class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    )}
                   </div>
                 </div>
               )}
