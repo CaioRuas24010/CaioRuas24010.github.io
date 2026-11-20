@@ -1,0 +1,423 @@
+---
+import { Picture } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Katex from '../components/Katex.astro';
+import fotoPerfil from '../assets/foto-perfil.jpg';
+import {
+  publications,
+  projects,
+  profileData,
+  awardsList,
+  getProjectWidths,
+} from '../data/portfolioData';
+import { ROUTES, type Lang } from '../i18n/routes';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = 'pt' } = Astro.props;
+const isEn = lang === 'en';
+const routes = ROUTES[lang];
+
+const featuredPubs = publications.filter((p) => p.featured);
+const featuredProjects = projects.filter((p) => p.featured);
+---
+
+<BaseLayout title={isEn ? 'Home' : 'Início'} lang={lang} page="home">
+  <!-- Hero Section: Scientific Engraving / Notebook Plate -->
+  <section class="relative py-6 sm:py-10">
+    <!-- Top Archival Classification Strip -->
+    <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-8 border-b-[1.5px] border-ink dark:border-ink-chalk text-[11px] font-mono uppercase tracking-widest text-ink-muted dark:text-ink-chalk/80">
+      <span>
+        {isEn
+          ? 'RESEARCH & CODE NOTEBOOK • SHEET NO. 01'
+          : 'CADERNO DE PESQUISA & CÓDIGO • FOLHA Nº 01'}
+      </span>
+      <span>ORCID: {profileData.orcidId}</span>
+      <span>ILUM / CNPEM &bull; CAMPINAS, SP</span>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+      <!-- Left Column: Editorial Typography & Summary -->
+      <div class="lg:col-span-7 space-y-6">
+        <div class="inline-flex items-center gap-2.5 px-3 py-1 border-[1.5px] border-ink dark:border-ink-chalk bg-paper-light dark:bg-ink-nightCard text-xs font-mono uppercase tracking-wider">
+          <span class="w-2 h-2 bg-ink dark:bg-ink-chalk inline-block"></span>
+          <span>
+            {isEn
+              ? 'B.Sc. Student in Science and Technology — Ilum'
+              : 'Bacharelando em Ciência e Tecnologia — Ilum'}
+          </span>
+        </div>
+
+        <h1 class="font-serif text-4xl sm:text-6xl lg:text-[4.1rem] font-bold tracking-tight leading-[1.03]">
+          Caio Marcelo <br />
+          <span class="italic font-normal underline decoration-2 underline-offset-8">
+            Cavallari Ruas
+          </span>
+        </h1>
+
+        <div class="p-4 border-l-4 border-ink dark:border-ink-chalk hatch-diagonal">
+          <p class="text-sm sm:text-base font-mono leading-relaxed">
+            {isEn
+              ? 'Materials Physics • Normed Spaces & Topology • Multidisciplinary Science • Hackathons & AI • Citizen Science'
+              : 'Física de Materiais • Espaços Normados & Topologia • Formação Multidisciplinar • Hackathons & IA • Ciência Cidadã'}
+          </p>
+        </div>
+
+        {
+          isEn ? (
+            <p class="text-base sm:text-lg text-ink-muted dark:text-ink-chalk/85 leading-relaxed">
+              Undergraduate student in Science and Technology at <strong class="text-ink dark:text-ink-chalk font-semibold">Ilum — School of Science (CNPEM)</strong> and <strong class="text-ink dark:text-ink-chalk font-semibold">Official Trainer at the International Astronomical Search Collaboration (IASC) &amp; MCTI Asteroid Hunt</strong>, mentoring citizen science campaigns in asteroid detection from astronomical imagery. I work at the intersection of mathematical and physical modeling, complex systems, software development, and side projects.
+            </p>
+          ) : (
+            <p class="text-base sm:text-lg text-ink-muted dark:text-ink-chalk/85 leading-relaxed">
+              Bacharelando em Ciência e Tecnologia pela <strong class="text-ink dark:text-ink-chalk font-semibold">Ilum — Escola de Ciência (CNPEM)</strong> e <strong class="text-ink dark:text-ink-chalk font-semibold">Treinador Oficial do International Astronomical Search Collaboration (IASC) &amp; Caça Asteroides MCTI</strong>, orientando campanhas de ciência cidadã na identificação de asteroides em imagens astronômicas. Atuo na interseção entre modelagem matemática e física, sistemas complexos, desenvolvimento de software e projetos paralelos.
+            </p>
+          )
+        }
+
+        <!-- Primary Navigation Actions -->
+        <div class="flex flex-wrap items-center gap-4 pt-2">
+          <a
+            href={routes.publications}
+            class="ink-btn-primary px-5 py-3 text-xs sm:text-sm font-mono uppercase tracking-wider inline-flex items-center gap-2"
+          >
+            <span>{isEn ? 'II. Scientific Contributions' : 'II. Ver Contribuições Científicas'}</span>
+            <span>&rarr;</span>
+          </a>
+
+          <a
+            href={routes.projects}
+            class="ink-btn px-5 py-3 text-xs sm:text-sm font-mono uppercase tracking-wider inline-flex items-center gap-2"
+          >
+            <span>{isEn ? 'III. Repositories & Hackathons' : 'III. Repositórios & Hackathons'}</span>
+          </a>
+
+          <a
+            href={routes.about}
+            class="px-3 py-2 text-xs font-mono uppercase tracking-wider underline underline-offset-4 hover:opacity-70 transition-opacity"
+          >
+            <span>{isEn ? 'IV. Full CV & Bio' : 'IV. Súmula Completa'}</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Right Column: Portrait / Author Photo Frame in Nanquim Style -->
+      <div class="lg:col-span-5">
+        <div class="ink-card p-5 sm:p-6 max-w-sm mx-auto lg:max-w-none">
+          <div class="flex items-center justify-between pb-3 mb-4 border-b border-ink dark:border-ink-chalk text-[11px] font-mono uppercase tracking-widest">
+            <span>{isEn ? 'FIG. I — AUTHOR PORTRAIT' : 'FIG. I — RETRATO DO AUTOR'}</span>
+            <span>CAMPINAS, SP</span>
+          </div>
+
+          <!-- Portrait Frame with Crosshatching & Corner Marks (Cropped top, less vertical) -->
+          <div class="relative border-[1.5px] border-ink dark:border-ink-chalk bg-paper dark:bg-ink-night p-2.5 crosshatch-pattern group">
+            <div class="relative aspect-[16/15] overflow-hidden border border-ink dark:border-ink-chalk bg-paper-light dark:bg-ink-nightCard">
+              <Picture
+                src={fotoPerfil}
+                formats={['avif', 'webp']}
+                widths={[360, 560, 768]}
+                sizes="(max-width: 640px) calc(100vw - 5rem), (max-width: 1024px) 340px, 440px"
+                quality={82}
+                alt={isEn ? 'Portrait of Caio Marcelo Cavallari Ruas' : 'Foto de Caio Marcelo Cavallari Ruas'}
+                pictureAttributes={{ class: 'block w-full h-full' }}
+                class="w-full h-full object-cover object-[50%_78%] group-hover:scale-[1.02] transition-transform duration-500"
+                loading="eager"
+                fetchpriority="high"
+                decoding="async"
+              />
+              <!-- Subtle corner crosshairs -->
+              <div class="pointer-events-none absolute inset-2 border border-white/30"></div>
+            </div>
+          </div>
+
+          <!-- Jake the Dog Quote underneath photo -->
+          <div class="mt-4 pt-3.5 border-t border-ink/30 dark:border-ink-chalk/30">
+            <figure class="border-l-[3px] border-ink dark:border-ink-chalk pl-3.5 py-0.5 text-left">
+              <blockquote class="font-sans text-xs sm:text-sm font-medium leading-relaxed text-ink dark:text-ink-chalk">
+                {isEn
+                  ? '“Dude, suckin’ at something is the first step towards being sorta good at something.”'
+                  : '“Cara, ser ruim em alguma coisa é o primeiro passo para se tornar meio bom em alguma coisa.”'}
+              </blockquote>
+              <figcaption class="mt-1.5 text-[11px] font-mono uppercase tracking-widest text-ink-muted dark:text-ink-chalk/70">
+                {isEn ? '— Jake the Dog' : '— Jake, o Cão'}
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Double Rule Divider -->
+  <div class="my-12 ink-rule-double"></div>
+
+  <!-- Featured Projects Section -->
+  <section class="py-4">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+      <div>
+        <span class="text-xs font-mono uppercase tracking-widest text-ink-muted dark:text-ink-chalk/70">
+          {isEn
+            ? 'SECTION I • ENGINEERING, HACKATHONS & APPLIED RESEARCH'
+            : 'SECÇÃO I • ENGENHARIA, HACKATHONS & PESQUISA APLICADA'}
+        </span>
+        <h2 class="font-serif text-3xl sm:text-4xl font-bold mt-1">
+          {isEn ? 'Featured Repositories & Projects' : 'Repositórios & Projetos em Destaque'}
+        </h2>
+      </div>
+      <a
+        href={routes.projects}
+        class="ink-btn px-4 py-2 text-xs font-mono uppercase tracking-wider self-start sm:self-auto"
+      >
+        <span>{isEn ? 'View all 6 projects →' : 'Ver todos os 6 projetos →'}</span>
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {
+        featuredProjects.map((project) => {
+          const projTitle = isEn ? project.titleEn : project.title;
+          const projHighlight = isEn
+            ? project.highlightEn || project.highlight
+            : project.highlight;
+          const projAlt = isEn
+            ? `Screenshot of ${projTitle}`
+            : `Screenshot do projeto ${projTitle}`;
+
+          return (
+            <article class="ink-card p-6 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between gap-2 pb-3 mb-3 border-b border-ink/30 dark:border-ink-chalk/30 text-xs font-mono">
+                  <span class="font-bold">{project.figNumber} // {project.repoName}</span>
+                  <span class="inline-block p-[3px] crosshatch-pattern border border-ink dark:border-ink-chalk">
+                    <span class="block px-2 py-0.5 bg-paper-light dark:bg-ink-nightCard border border-ink/70 dark:border-ink-chalk/70 text-[11px] font-bold">
+                      {project.year}
+                    </span>
+                  </span>
+                </div>
+
+                {projHighlight && (
+                  <div class="inline-block mb-2 px-2.5 py-0.5 text-[11px] font-mono uppercase tracking-wider bg-ink text-paper dark:bg-ink-chalk dark:text-ink-night font-bold">
+                    {projHighlight}
+                  </div>
+                )}
+
+                {project.image && (
+                  <div class="mb-3 border-[1.5px] border-ink dark:border-ink-chalk bg-paper dark:bg-ink-night p-1.5 overflow-hidden">
+                    <div class="relative aspect-video overflow-hidden border border-ink/40 dark:border-ink-chalk/40">
+                      {project.image.format === 'svg' ? (
+                        <img
+                          src={project.image.src}
+                          width={project.image.width}
+                          height={project.image.height}
+                          alt={projAlt}
+                          class="w-full h-full object-cover hover:scale-[1.02] transition-transform duration-500"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      ) : (
+                        <Picture
+                          src={project.image}
+                          formats={['avif', 'webp']}
+                          widths={getProjectWidths(project.image)}
+                          sizes="(max-width: 767px) calc(100vw - 4.5rem), (max-width: 1152px) 46vw, 520px"
+                          quality={80}
+                          alt={projAlt}
+                          pictureAttributes={{ class: 'block w-full h-full' }}
+                          class="w-full h-full object-cover hover:scale-[1.02] transition-transform duration-500"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                <h3 class="font-serif text-2xl font-bold leading-snug">{projTitle}</h3>
+
+                <p class="text-xs font-mono text-ink-muted dark:text-ink-chalk/75 mt-1">
+                  {isEn ? project.subtitleEn : project.subtitle}
+                </p>
+
+                <p class="text-sm text-ink-muted dark:text-ink-chalk/85 mt-3 leading-relaxed">
+                  {isEn ? project.descriptionEn : project.description}
+                </p>
+
+                {project.equation && (
+                  <div class="mt-4 px-3 py-2 border border-ink/50 dark:border-ink-chalk/50 bg-paper dark:bg-ink-night text-xs">
+                    <Katex block={true} math={project.equation} />
+                  </div>
+                )}
+              </div>
+
+              <div class="pt-4 mt-5 border-t border-ink/30 dark:border-ink-chalk/30 flex items-center justify-between gap-3">
+                <div class="flex flex-wrap gap-1.5">
+                  {project.tech.slice(0, 3).map((t) => (
+                    <span class="text-[11px] font-mono px-2 py-0.5 border border-ink/40 dark:border-ink-chalk/40">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+                <div class="flex items-center gap-3 shrink-0">
+                  {project.liveUrl && (
+                    <a
+                      href={project.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="text-xs font-mono font-bold uppercase underline underline-offset-4 hover:opacity-70"
+                    >
+                      App &nearr;
+                    </a>
+                  )}
+                  <a
+                    href={project.repoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-xs font-mono font-bold uppercase underline underline-offset-4 hover:opacity-70"
+                  >
+                    GitHub &nearr;
+                  </a>
+                </div>
+              </div>
+            </article>
+          );
+        })
+      }
+    </div>
+  </section>
+
+  <!-- Double Rule Divider -->
+  <div class="my-14 ink-rule-double"></div>
+
+  <!-- Featured Scientific Contributions Section -->
+  <section class="py-4">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+      <div>
+        <span class="text-xs font-mono uppercase tracking-widest text-ink-muted dark:text-ink-chalk/70">
+          {isEn
+            ? 'SECTION II • SCIENTIFIC CONTRIBUTIONS'
+            : 'SECÇÃO II • SÚMULA DE CONTRIBUIÇÕES À CIÊNCIA'}
+        </span>
+        <h2 class="font-serif text-3xl sm:text-4xl font-bold mt-1">
+          {isEn ? 'Publications & Scientific Works' : 'Publicações & Trabalhos Científicos'}
+        </h2>
+      </div>
+      <a
+        href={routes.publications}
+        class="ink-btn px-4 py-2 text-xs font-mono uppercase tracking-wider self-start sm:self-auto"
+      >
+        <span>
+          {isEn
+            ? 'Full Catalog (BibTeX & Details) →'
+            : 'Catálogo Completo (BibTeX & Detalhes) →'}
+        </span>
+      </a>
+    </div>
+
+    <div class="space-y-6">
+      {
+        featuredPubs.map((pub) => {
+          const pubAward = isEn ? pub.awardEn || pub.award : pub.award;
+          const pubTags = isEn ? pub.tagsEn : pub.tags;
+
+          return (
+            <article class="ink-card p-6 sm:p-7">
+              <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-ink/30 dark:border-ink-chalk/30 text-xs font-mono">
+                <div class="flex items-center gap-3">
+                  <span class="font-bold">{isEn ? pub.plateNumberEn : pub.plateNumber}</span>
+                  <span>&bull;</span>
+                  <span>
+                    {isEn ? pub.typeEn : pub.type} ({pub.year})
+                  </span>
+                </div>
+                {pubAward && (
+                  <span class="px-2.5 py-0.5 bg-ink text-paper dark:bg-ink-chalk dark:text-ink-night font-bold text-[11px]">
+                    ★ {pubAward}
+                  </span>
+                )}
+              </div>
+
+              <h3 class="font-serif text-2xl font-bold leading-snug">{pub.title}</h3>
+
+              <p class="text-xs font-mono text-ink-muted dark:text-ink-chalk/75 mt-1.5">
+                {pub.authors.join('; ')} &mdash;{' '}
+                <span class="italic">{isEn ? pub.venueEn : pub.venue}</span> ({pub.location},{' '}
+                {pub.year})
+              </p>
+
+              <p class="text-sm text-ink-muted dark:text-ink-chalk/85 mt-3 leading-relaxed">
+                {isEn ? pub.abstractEn : pub.abstract}
+              </p>
+
+              <div class="mt-4 pt-3 border-t border-ink/20 dark:border-ink-chalk/20 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex flex-wrap gap-1.5">
+                  {pubTags.map((tag) => (
+                    <span class="text-[11px] font-mono px-2 py-0.5 border border-ink/40 dark:border-ink-chalk/40">
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+                <a
+                  href={routes.publications}
+                  class="text-xs font-mono font-bold uppercase underline underline-offset-4"
+                >
+                  <span>
+                    {isEn
+                      ? 'Open BibTeX Citation & Details →'
+                      : 'Abrir citação BibTeX & Detalhes →'}
+                  </span>
+                </a>
+              </div>
+            </article>
+          );
+        })
+      }
+    </div>
+  </section>
+
+  <!-- Double Rule Divider -->
+  <div class="my-14 ink-rule-double"></div>
+
+  <!-- Awards & Distinctions Summary Plate -->
+  <section class="py-4">
+    <div class="mb-8">
+      <span class="text-xs font-mono uppercase tracking-widest text-ink-muted dark:text-ink-chalk/70">
+        {isEn
+          ? 'SECTION III • ACADEMIC AND TECHNOLOGICAL RECOGNITIONS'
+          : 'SECÇÃO III • RECONHECIMENTOS ACADÊMICOS E TECNOLÓGICOS'}
+      </span>
+      <h2 class="font-serif text-3xl sm:text-4xl font-bold mt-1">
+        {isEn ? 'Awards, Honors & Distinctions' : 'Prêmios, Distinções & Honrarias'}
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {
+        awardsList.map((award, idx) => (
+          <div class="ink-card p-5 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between text-xs font-mono pb-2 mb-3 border-b border-ink/30 dark:border-ink-chalk/30">
+                <span>{isEn ? `HONOR NO. 0${idx + 1}` : `DISTINÇÃO Nº 0${idx + 1}`}</span>
+                <span class="inline-block p-[3px] crosshatch-pattern border border-ink dark:border-ink-chalk">
+                  <span class="block px-2 py-0.5 bg-paper-light dark:bg-ink-nightCard border border-ink/70 dark:border-ink-chalk/70 font-bold">
+                    {award.year}
+                  </span>
+                </span>
+              </div>
+              <h3 class="font-serif text-xl font-bold leading-snug">
+                {isEn ? award.titleEn : award.title}
+              </h3>
+              <p class="text-xs font-mono text-ink-muted dark:text-ink-chalk/70 mt-1">
+                {award.issuer}
+              </p>
+              <p class="text-xs sm:text-sm text-ink-muted dark:text-ink-chalk/85 mt-3 leading-relaxed">
+                {isEn ? award.detailEn : award.detail}
+              </p>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

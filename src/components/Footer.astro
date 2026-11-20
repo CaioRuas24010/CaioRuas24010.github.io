@@ -1,4 +1,12 @@
 ---
+import type { Lang } from '../i18n/routes';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = 'pt' } = Astro.props;
+const isEn = lang === 'en';
 const currentYear = new Date().getFullYear();
 ---
 
@@ -10,7 +18,9 @@ const currentYear = new Date().getFullYear();
         Caio Marcelo Cavallari Ruas
       </p>
       <p class="text-xs font-mono text-ink-muted dark:text-ink-chalk/70">
-        Ilum — Escola de Ciência (CNPEM) &bull; IASC / Caça Asteroides MCTI &bull; Campinas, SP
+        {isEn
+          ? 'Ilum — School of Science (CNPEM) • IASC / MCTI Asteroid Hunt • Campinas, SP'
+          : 'Ilum — Escola de Ciência (CNPEM) • IASC / Caça Asteroides MCTI • Campinas, SP'}
       </p>
     </div>
 

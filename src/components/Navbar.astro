@@ -1,21 +1,33 @@
 ---
-const pathname = Astro.url.pathname;
+import { ROUTES, type Lang, type PageKey } from '../i18n/routes';
 
-const navLinks = [
-  { href: '/', num: 'I.', labelPt: 'Início', labelEn: 'Home', exact: true },
-  { href: '/publicacoes', num: 'II.', labelPt: 'Publicações', labelEn: 'Publications', exact: false },
-  { href: '/projetos', num: 'III.', labelPt: 'Projetos', labelEn: 'Projects', exact: false },
-  { href: '/sobre', num: 'IV.', labelPt: 'Súmula & Bio', labelEn: 'CV & Bio', exact: false },
-];
-
-function isActive(href: string, exact: boolean) {
-  if (exact) return pathname === '/';
-  return pathname.startsWith(href);
+interface Props {
+  lang?: Lang;
+  page: PageKey;
 }
+
+const { lang = 'pt', page } = Astro.props;
+const isEn = lang === 'en';
+
+const navLinks: Array<{ key: PageKey; href: string; num: string; label: string }> = [
+  { key: 'home', href: ROUTES[lang].home, num: 'I.', label: isEn ? 'Home' : 'Início' },
+  {
+    key: 'publications',
+    href: ROUTES[lang].publications,
+    num: 'II.',
+    label: isEn ? 'Publications' : 'Publicações',
+  },
+  {
+    key: 'projects',
+    href: ROUTES[lang].projects,
+    num: 'III.',
+    label: isEn ? 'Projects' : 'Projetos',
+  },
+  { key: 'about', href: ROUTES[lang].about, num: 'IV.', label: isEn ? 'CV & Bio' : 'Súmula & Bio' },
+];
 ---
 
 <header
-  transition:persist
   class="sticky top-0 z-50 bg-paper/95 dark:bg-ink-night/95 backdrop-blur-sm border-b-2 border-ink dark:border-ink-chalk transition-colors duration-300"
 >
   <!-- Top fine hatching strip -->
@@ -24,7 +36,7 @@ function isActive(href: string, exact: boolean) {
   <nav class="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
     <!-- Brand / Personal Monogram C²R (Caio Cavallari Ruas) in Nanquim Line-Art style -->
     <a
-      href="/"
+      href={ROUTES[lang].home}
       class="group flex items-center gap-2 sm:gap-3.5 min-w-0 text-ink dark:text-ink-chalk tracking-tight"
       title="C²R — Caio Marcelo Cavallari Ruas"
     >
@@ -69,8 +81,7 @@ function isActive(href: string, exact: boolean) {
           Caio M. C. Ruas
         </span>
         <span class="text-[9px] sm:text-[10px] font-mono uppercase tracking-wider sm:tracking-widest text-ink-muted dark:text-ink-chalk/70 mt-1 truncate">
-          <span class="lang-pt">Ilum &bull; CNPEM<span class="hidden sm:inline"> &bull; Caderno Científico</span></span>
-          <span class="lang-en">Ilum &bull; CNPEM<span class="hidden sm:inline"> &bull; Scientific Notebook</span></span>
+          Ilum &bull; CNPEM<span class="hidden sm:inline"> &bull; {isEn ? 'Scientific Notebook' : 'Caderno Científico'}</span>
         </span>
       </div>
     </a>
@@ -79,11 +90,11 @@ function isActive(href: string, exact: boolean) {
     <div class="hidden md:flex items-center gap-1" id="desktop-nav">
       {
         navLinks.map((link) => {
-          const active = isActive(link.href, link.exact);
+          const active = link.key === page;
           return (
             <a
               href={link.href}
-              data-nav-link={link.href}
+              aria-current={active ? 'page' : undefined}
               class:list={[
                 'px-3.5 py-1.5 text-xs font-mono uppercase tracking-wider transition-all duration-150 border-[1.5px]',
                 active
@@ -92,8 +103,7 @@ function isActive(href: string, exact: boolean) {
               ]}
             >
               <span class="opacity-60 mr-1">{link.num}</span>
-              <span class="lang-pt">{link.labelPt}</span>
-              <span class="lang-en">{link.labelEn}</span>
+              <span>{link.label}</span>
             </a>
           );
         })
@@ -106,13 +116,19 @@ function isActive(href: string, exact: boolean) {
       <div
         class="inline-flex items-center border-[1.5px] border-ink dark:border-ink-chalk bg-paper-light dark:bg-ink-nightCard h-8 text-[10px] sm:text-[11px] font-mono"
         role="group"
-        aria-label="Selecionar idioma / Select language"
+        aria-label={isEn ? 'Select language' : 'Selecionar idioma'}
       >
-        <button
-          type="button"
-          data-lang-btn="pt"
+        <a
+          href={ROUTES.pt[page]}
+          hreflang="pt-BR"
+          aria-current={lang === 'pt' ? 'page' : undefined}
           title="Português (Brasil)"
-          class="lang-tab-btn h-full px-1.5 sm:px-2 flex items-center gap-1 sm:gap-1.5 transition-colors"
+          class:list={[
+            'lang-tab-btn h-full px-1.5 sm:px-2 flex items-center gap-1 sm:gap-1.5 transition-colors',
+            lang === 'pt'
+              ? 'bg-ink text-paper dark:bg-ink-chalk dark:text-ink-night font-bold'
+              : 'text-ink-muted dark:text-ink-chalk/75 hover:text-ink dark:hover:text-ink-chalk',
+          ]}
         >
           <!-- Brazil Flag SVG -->
           <svg class="w-3.5 h-2.5 shrink-0 border border-black/20" viewBox="0 0 20 14" fill="none">
@@ -122,15 +138,21 @@ function isActive(href: string, exact: boolean) {
             <path d="M7.2 6.4 Q10 5.4 12.8 7.3" stroke="#FFFFFF" stroke-width="0.6" fill="none" />
           </svg>
           <span>BR</span>
-        </button>
+        </a>
 
         <span class="w-[1px] h-full bg-ink/40 dark:bg-ink-chalk/40"></span>
 
-        <button
-          type="button"
-          data-lang-btn="en"
+        <a
+          href={ROUTES.en[page]}
+          hreflang="en"
+          aria-current={lang === 'en' ? 'page' : undefined}
           title="English"
-          class="lang-tab-btn h-full px-1.5 sm:px-2 flex items-center gap-1 sm:gap-1.5 transition-colors"
+          class:list={[
+            'lang-tab-btn h-full px-1.5 sm:px-2 flex items-center gap-1 sm:gap-1.5 transition-colors',
+            lang === 'en'
+              ? 'bg-ink text-paper dark:bg-ink-chalk dark:text-ink-night font-bold'
+              : 'text-ink-muted dark:text-ink-chalk/75 hover:text-ink dark:hover:text-ink-chalk',
+          ]}
         >
           <!-- US/UK English Flag SVG -->
           <svg class="w-3.5 h-2.5 shrink-0 border border-black/20" viewBox="0 0 20 14" fill="none">
@@ -141,15 +163,15 @@ function isActive(href: string, exact: boolean) {
             <path d="M10,0 V14 M0,7 H20" stroke="#C8102E" stroke-width="2.4" />
           </svg>
           <span>ING</span>
-        </button>
+        </a>
       </div>
 
       <!-- Smaller, delicate Sun/Moon Theme Toggle Button -->
       <button
         id="theme-toggle"
         type="button"
-        aria-label="Alternar tema claro ou escuro"
-        title="Alternar tema claro / escuro"
+        aria-label={isEn ? 'Toggle light or dark theme' : 'Alternar tema claro ou escuro'}
+        title={isEn ? 'Toggle light / dark theme' : 'Alternar tema claro / escuro'}
         class="ink-btn w-8 h-8 flex items-center justify-center"
       >
         <!-- Sun icon (shown in dark mode) -->
@@ -167,7 +189,7 @@ function isActive(href: string, exact: boolean) {
       <button
         id="mobile-menu-btn"
         type="button"
-        aria-label="Abrir índice"
+        aria-label={isEn ? 'Open navigation menu' : 'Abrir índice'}
         class="md:hidden ink-btn w-8 h-8 flex items-center justify-center"
       >
         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
@@ -181,11 +203,11 @@ function isActive(href: string, exact: boolean) {
   <div id="mobile-menu" class="hidden md:hidden border-t-[1.5px] border-ink dark:border-ink-chalk bg-paper dark:bg-ink-night px-4 py-3 space-y-1.5">
     {
       navLinks.map((link) => {
-        const active = isActive(link.href, link.exact);
+        const active = link.key === page;
         return (
           <a
             href={link.href}
-            data-mobile-nav-link={link.href}
+            aria-current={active ? 'page' : undefined}
             class:list={[
               'block px-4 py-2 text-xs font-mono uppercase tracking-wider border-[1.5px] transition-colors',
               active
@@ -194,8 +216,7 @@ function isActive(href: string, exact: boolean) {
             ]}
           >
             <span class="opacity-60 mr-1.5">{link.num}</span>
-            <span class="lang-pt">{link.labelPt}</span>
-            <span class="lang-en">{link.labelEn}</span>
+            <span>{link.label}</span>
           </a>
         );
       })
@@ -204,16 +225,6 @@ function isActive(href: string, exact: boolean) {
 </header>
 
 <script>
-  function updateLangButtonsUI(activeLang: string) {
-    document.querySelectorAll('[data-lang-btn]').forEach((btn) => {
-      const btnLang = btn.getAttribute('data-lang-btn');
-      const isSelected = btnLang === activeLang;
-      btn.className = isSelected
-        ? 'lang-tab-btn h-full px-1.5 sm:px-2 flex items-center gap-1 sm:gap-1.5 transition-colors bg-ink text-paper dark:bg-ink-chalk dark:text-ink-night font-bold'
-        : 'lang-tab-btn h-full px-1.5 sm:px-2 flex items-center gap-1 sm:gap-1.5 transition-colors text-ink-muted dark:text-ink-chalk/75 hover:text-ink dark:hover:text-ink-chalk';
-    });
-  }
-
   function setupNavbar() {
     const themeToggleBtn = document.getElementById('theme-toggle');
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
@@ -227,56 +238,12 @@ function isActive(href: string, exact: boolean) {
       });
     }
 
-    document.querySelectorAll('[data-lang-btn]').forEach((btn) => {
-      if (!btn.hasAttribute('data-bound')) {
-        btn.setAttribute('data-bound', 'true');
-        btn.addEventListener('click', () => {
-          const lang = btn.getAttribute('data-lang-btn') || 'pt';
-          localStorage.setItem('lang', lang);
-          document.documentElement.setAttribute('data-lang', lang);
-          document.documentElement.setAttribute('lang', lang === 'en' ? 'en' : 'pt-BR');
-          updateLangButtonsUI(lang);
-          window.dispatchEvent(new CustomEvent('langchange', { detail: { lang } }));
-        });
-      }
-    });
-
-    const currentLang = localStorage.getItem('lang') || 'pt';
-    updateLangButtonsUI(currentLang);
-
     if (mobileMenuBtn && mobileMenu && !mobileMenuBtn.hasAttribute('data-bound')) {
       mobileMenuBtn.setAttribute('data-bound', 'true');
       mobileMenuBtn.addEventListener('click', () => {
         mobileMenu.classList.toggle('hidden');
       });
     }
-
-    const currentPath = window.location.pathname;
-    document.querySelectorAll('[data-nav-link]').forEach((el) => {
-      const href = el.getAttribute('data-nav-link') || '/';
-      const isExact = href === '/';
-      const active = isExact ? currentPath === '/' : currentPath.startsWith(href);
-
-      el.className = [
-        'px-3.5 py-1.5 text-xs font-mono uppercase tracking-wider transition-all duration-150 border-[1.5px]',
-        active
-          ? 'bg-ink text-paper dark:bg-ink-chalk dark:text-ink-night border-ink dark:border-ink-chalk font-bold shadow-[3px_3px_0px_rgba(18,18,17,0.28)] dark:shadow-[3px_3px_0px_rgba(242,239,233,0.28)]'
-          : 'border-transparent text-ink-muted dark:text-ink-chalk/80 hover:border-ink/40 dark:hover:border-ink-chalk/40 hover:text-ink dark:hover:text-ink-chalk',
-      ].join(' ');
-    });
-
-    document.querySelectorAll('[data-mobile-nav-link]').forEach((el) => {
-      const href = el.getAttribute('data-mobile-nav-link') || '/';
-      const isExact = href === '/';
-      const active = isExact ? currentPath === '/' : currentPath.startsWith(href);
-
-      el.className = [
-        'block px-4 py-2 text-xs font-mono uppercase tracking-wider border-[1.5px] transition-colors',
-        active
-          ? 'bg-ink text-paper dark:bg-ink-chalk dark:text-ink-night border-ink dark:border-ink-chalk font-bold'
-          : 'border-transparent text-ink-muted dark:text-ink-chalk/80 hover:border-ink dark:hover:border-ink-chalk',
-      ].join(' ');
-    });
 
     if (mobileMenu) {
       mobileMenu.classList.add('hidden');

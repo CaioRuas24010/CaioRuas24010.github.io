@@ -1,0 +1,314 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import {
+  profileData,
+  educationList,
+  experienceList,
+  awardsList,
+} from '../data/portfolioData';
+import type { Lang } from '../i18n/routes';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = 'pt' } = Astro.props;
+const isEn = lang === 'en';
+---
+
+<BaseLayout
+  title={isEn ? 'Curriculum Vitae & About Me' : 'Súmula Curricular & Sobre Mim'}
+  description={isEn
+    ? 'Curriculum vitae, academic background, research at CNPEM/Ilum, awards, and science outreach by Caio Marcelo Cavallari Ruas.'
+    : 'Súmula curricular, formação acadêmica, histórico de pesquisa no CNPEM/Ilum, premiações e atuação em divulgação científica de Caio Marcelo Cavallari Ruas.'}
+  lang={lang}
+  page="about"
+>
+  <section class="space-y-12">
+    <!-- Archival Header with Download CV PDF Button on the right -->
+    <div class="border-b-2 border-ink dark:border-ink-chalk pb-6 space-y-3">
+      <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono uppercase tracking-widest text-ink-muted dark:text-ink-chalk/70">
+        <span>
+          {isEn
+            ? 'CURRICULUM VITAE & BIOGRAPHY • SECTION IV'
+            : 'SÚMULA CURRICULAR & BIOGRAFIA • SECÇÃO IV'}
+        </span>
+        <span>LATTES ID: {profileData.lattesId}</span>
+      </div>
+
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pt-1">
+        <div class="space-y-3 max-w-3xl">
+          <h1 class="font-serif text-4xl sm:text-5xl font-bold tracking-tight">
+            {profileData.name}
+          </h1>
+          {
+            isEn ? (
+              <p class="text-ink-muted dark:text-ink-chalk/85 text-base leading-relaxed">
+                B.Sc. Student in Science and Technology at <strong class="text-ink dark:text-ink-chalk">Ilum — School of Science (CNPEM)</strong> and Official Trainer for the international citizen science program <strong class="text-ink dark:text-ink-chalk">IASC / MCTI Asteroid Hunt</strong>, with a multidisciplinary background in Materials Physics, Chemistry, Normed Spaces, Scientific Computing, and Artificial Intelligence.
+              </p>
+            ) : (
+              <p class="text-ink-muted dark:text-ink-chalk/85 text-base leading-relaxed">
+                Bacharelando em Ciência e Tecnologia pela <strong class="text-ink dark:text-ink-chalk">Ilum — Escola de Ciência (CNPEM)</strong> e Treinador Oficial do programa internacional de ciência cidadã <strong class="text-ink dark:text-ink-chalk">IASC / Caça Asteroides MCTI</strong>, com formação multidisciplinar em Física de Materiais, Química, Espaços Normados, Computação Científica e Inteligência Artificial.
+              </p>
+            )
+          }
+        </div>
+
+        <!-- Download CV PDF Button right beside the primary description -->
+        <div class="shrink-0">
+          <a
+            href={profileData.cvPdfUrl}
+            download="CV_Caio_Marcelo_Cavallari_Ruas.pdf"
+            class="ink-btn-primary px-5 py-3 text-xs sm:text-sm font-mono font-bold uppercase tracking-wider inline-flex items-center gap-2.5"
+          >
+            <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4" />
+            </svg>
+            <span>{isEn ? 'Download CV (PDF)' : 'Baixar CV / Súmula (PDF)'}</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Grid: Bio + Official Links Card -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div class="lg:col-span-8 space-y-6">
+        <div class="ink-card p-6 sm:p-8 space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-ink dark:border-ink-chalk text-xs font-mono uppercase tracking-wider">
+            <span>
+              {isEn ? 'ACADEMIC & SCIENTIFIC PROFILE' : 'APRESENTAÇÃO ACADÊMICA & CIENTÍFICA'}
+            </span>
+            <span>CAMPINAS, SP</span>
+          </div>
+
+          {
+            isEn ? (
+              <>
+                <p class="text-sm sm:text-base text-ink-muted dark:text-ink-chalk/85 leading-relaxed">
+                  My multidisciplinary education at <strong class="text-ink dark:text-ink-chalk">Ilum — School of Science (CNPEM)</strong> integrates computational methods, Materials Physics, Chemistry, Advanced Mathematics (Normed Spaces, Metrics, and Complex Systems), and Life Sciences in close connection with the CNPEM national laboratories (<strong class="text-ink dark:text-ink-chalk">Sirius, LNNano, LNBio, and LNBR</strong>).
+                </p>
+
+                <p class="text-sm sm:text-base text-ink-muted dark:text-ink-chalk/85 leading-relaxed">
+                  Since 2021, I have served as an <strong class="text-ink dark:text-ink-chalk">Official Volunteer Trainer in Brazil for the International Astronomical Search Collaboration (IASC) and the MCTI Asteroid Hunt program</strong>, mentoring teams and students in citizen science campaigns focused on asteroid detection in astronomical imagery and astronomy outreach.
+                </p>
+
+                <p class="text-sm sm:text-base text-ink-muted dark:text-ink-chalk/85 leading-relaxed">
+                  Throughout my undergraduate studies, I have conducted theoretical and computational research on the electronic spectrum of <strong class="text-ink dark:text-ink-chalk">graphene oxide</strong> (as a CNPq/INCT Materials Informatics fellow), investigations on <strong class="text-ink dark:text-ink-chalk">normed spaces and graph distances</strong> (1st place poster at PGMAT/UNESP), structural biology modeling in Life Sciences (LNBio/CNPEM), and software projects at hackathons such as <strong class="text-ink dark:text-ink-chalk">Hack2L Unicamp (1st place)</strong> and the <strong class="text-ink dark:text-ink-chalk">NASA Space Apps Challenge (People&apos;s Choice)</strong>.
+                </p>
+              </>
+            ) : (
+              <>
+                <p class="text-sm sm:text-base text-ink-muted dark:text-ink-chalk/85 leading-relaxed">
+                  Minha formação multidisciplinar na <strong class="text-ink dark:text-ink-chalk">Ilum — Escola de Ciência (CNPEM)</strong> integra métodos computacionais, Física de Materiais, Química, Matemática Avançada (como Espaços Normados, Métricas e Sistemas Complexos) e Ciências da Vida em contato constante com os laboratórios nacionais do CNPEM (<strong class="text-ink dark:text-ink-chalk">Sirius, LNNano, LNBio e LNBR</strong>).
+                </p>
+
+                <p class="text-sm sm:text-base text-ink-muted dark:text-ink-chalk/85 leading-relaxed">
+                  Desde 2021, atuo como <strong class="text-ink dark:text-ink-chalk">Treinador Oficial voluntário no Brasil pelo International Astronomical Search Collaboration (IASC) e pelo programa Caça Asteroides MCTI</strong>, orientando equipes e estudantes em campanhas de ciência cidadã dedicadas à identificação de asteroides em imagens astronômicas e à popularização da Astronomia.
+                </p>
+
+                <p class="text-sm sm:text-base text-ink-muted dark:text-ink-chalk/85 leading-relaxed">
+                  Ao longo da graduação, desenvolvi pesquisas em modelagem teórica e computacional do espectro eletrônico do <strong class="text-ink dark:text-ink-chalk">óxido de grafeno</strong> (como bolsista CNPq/INCT Materials Informatics), estudos em <strong class="text-ink dark:text-ink-chalk">espaços normados e distância em grafos</strong> (1º lugar na sessão de pôsteres do PGMAT/UNESP), modelagem estrutural em Ciências da Vida (LNBio/CNPEM) e soluções em hackathons como o <strong class="text-ink dark:text-ink-chalk">Hack2L Unicamp (1º lugar)</strong> e o <strong class="text-ink dark:text-ink-chalk">NASA Space Apps Challenge (People&apos;s Choice)</strong>.
+                </p>
+              </>
+            )
+          }
+        </div>
+      </div>
+
+      <!-- Right Column: Archival Register / Official Identifiers -->
+      <div class="lg:col-span-4 space-y-6">
+        <div class="ink-card p-6 space-y-5">
+          <div class="pb-3 border-b-[1.5px] border-ink dark:border-ink-chalk flex items-center justify-between text-xs font-mono uppercase">
+            <span>{isEn ? 'OFFICIAL IDENTIFIERS' : 'REGISTRO CADASTRAL'}</span>
+          </div>
+
+          <div class="space-y-3 text-xs font-mono">
+            <div class="p-3 border border-ink dark:border-ink-chalk bg-paper dark:bg-ink-night">
+              <span class="block text-[10px] uppercase text-ink-faint">ORCID iD</span>
+              <a
+                href={profileData.orcid}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="font-bold underline underline-offset-4 mt-0.5 inline-block"
+              >
+                {profileData.orcidId} &nearr;
+              </a>
+            </div>
+
+            <div class="p-3 border border-ink dark:border-ink-chalk bg-paper dark:bg-ink-night">
+              <span class="block text-[10px] uppercase text-ink-faint">Currículo Lattes (CNPq)</span>
+              <a
+                href={profileData.lattes}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="font-bold underline underline-offset-4 mt-0.5 inline-block"
+              >
+                lattes.cnpq.br/{profileData.lattesId} &nearr;
+              </a>
+            </div>
+
+            <div class="p-3 border border-ink dark:border-ink-chalk bg-paper dark:bg-ink-night">
+              <span class="block text-[10px] uppercase text-ink-faint">
+                {isEn ? 'Institutional Email' : 'E-mail Institucional'}
+              </span>
+              <a
+                href={`mailto:${profileData.email}`}
+                class="font-bold underline underline-offset-4 mt-0.5 inline-block"
+              >
+                {profileData.email}
+              </a>
+            </div>
+
+            <div class="p-3 border border-ink dark:border-ink-chalk bg-paper dark:bg-ink-night">
+              <span class="block text-[10px] uppercase text-ink-faint">GitHub</span>
+              <a
+                href={profileData.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="font-bold underline underline-offset-4 mt-0.5 inline-block"
+              >
+                github.com/CaioRuas24010 &nearr;
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Double Rule -->
+    <div class="ink-rule-double"></div>
+
+    <!-- Section 1: Histórico Profissional / Acadêmico -->
+    <div class="space-y-6">
+      <div>
+        <span class="text-xs font-mono uppercase tracking-widest text-ink-muted dark:text-ink-chalk/70">
+          {isEn
+            ? 'SECTION 2 • RESEARCH, TEACHING & OUTREACH EXPERIENCE'
+            : 'ITEM 2 DA SÚMULA • ATUAÇÃO EM PESQUISA, ENSINO E EXTENSÃO'}
+        </span>
+        <h2 class="font-serif text-3xl sm:text-4xl font-bold mt-1">
+          {isEn ? 'Academic & Professional Experience' : 'Histórico Profissional & Acadêmico'}
+        </h2>
+      </div>
+
+      <div class="space-y-6">
+        {
+          experienceList.map((exp, idx) => (
+            <div class="ink-card p-6">
+              <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-ink/30 dark:border-ink-chalk/30 text-xs font-mono">
+                <span class="font-bold">
+                  {isEn ? `ROLE 0${idx + 1}` : `ATIVIDADE 0${idx + 1}`} &bull; {exp.institution}
+                </span>
+                <span class="inline-block p-1 crosshatch-pattern border border-ink dark:border-ink-chalk">
+                  <span class="block px-2.5 py-0.5 bg-paper-light dark:bg-ink-nightCard border border-ink/70 dark:border-ink-chalk/70 font-bold">
+                    {isEn ? exp.periodEn : exp.period}
+                  </span>
+                </span>
+              </div>
+              <h3 class="font-serif text-2xl font-bold">{isEn ? exp.roleEn : exp.role}</h3>
+              {exp.advisor && (
+                <p class="text-xs font-mono text-ink-muted dark:text-ink-chalk/75 mt-1">
+                  {isEn ? exp.advisorEn : exp.advisor}
+                </p>
+              )}
+              <p class="text-sm text-ink-muted dark:text-ink-chalk/85 mt-3 leading-relaxed">
+                {isEn ? exp.descriptionEn : exp.description}
+              </p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- Double Rule -->
+    <div class="ink-rule-double"></div>
+
+    <!-- Section 2: Formação Acadêmica & Escolas Científicas -->
+    <div class="space-y-6">
+      <div>
+        <span class="text-xs font-mono uppercase tracking-widest text-ink-muted dark:text-ink-chalk/70">
+          {isEn
+            ? 'SECTION 1 • FORMAL EDUCATION & SCIENTIFIC SCHOOLS'
+            : 'ITEM 1 DA SÚMULA • EDUCAÇÃO FORMAL & ESCOLAS DE FÉRIAS'}
+        </span>
+        <h2 class="font-serif text-3xl sm:text-4xl font-bold mt-1">
+          {isEn ? 'Education & Complementary Training' : 'Formação Acadêmica & Complementar'}
+        </h2>
+      </div>
+
+      <div class="overflow-x-auto ink-card p-0">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b-2 border-ink dark:border-ink-chalk hatch-diagonal text-xs font-mono uppercase">
+              <th class="py-3.5 px-4 border-r border-ink dark:border-ink-chalk">
+                {isEn ? 'Period' : 'Período'}
+              </th>
+              <th class="py-3.5 px-4 border-r border-ink dark:border-ink-chalk">
+                {isEn ? 'Degree or Activity' : 'Título ou Atividade'}
+              </th>
+              <th class="py-3.5 px-4">{isEn ? 'Institution' : 'Instituição'}</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-ink/40 dark:divide-ink-chalk/40 text-sm">
+            {
+              educationList.map((ed) => (
+                <tr class="hover:bg-ink/5 dark:hover:bg-ink-chalk/5 transition-colors">
+                  <td class="py-4 px-4 font-mono text-xs font-bold whitespace-nowrap border-r border-ink/40 dark:border-ink-chalk/40 align-top">
+                    {ed.period}
+                  </td>
+                  <td class="py-4 px-4 border-r border-ink/40 dark:border-ink-chalk/40 align-top">
+                    <p class="font-serif text-lg font-bold leading-snug">
+                      {isEn ? ed.titleEn : ed.title}
+                    </p>
+                    <p class="text-xs text-ink-muted dark:text-ink-chalk/75 mt-1 leading-relaxed">
+                      {isEn ? ed.detailEn : ed.detail}
+                    </p>
+                  </td>
+                  <td class="py-4 px-4 font-mono text-xs align-top">{ed.institution}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Double Rule -->
+    <div class="ink-rule-double"></div>
+
+    <!-- Section 3: Prêmios, Distinções e Honrarias -->
+    <div class="space-y-6">
+      <div>
+        <span class="text-xs font-mono uppercase tracking-widest text-ink-muted dark:text-ink-chalk/70">
+          {isEn
+            ? 'SECTION 6.C • NATIONAL AND INTERNATIONAL HONORS'
+            : 'ITEM 6.C DA SÚMULA • RECONHECIMENTOS NACIONAIS E INTERNACIONAIS'}
+        </span>
+        <h2 class="font-serif text-3xl sm:text-4xl font-bold mt-1">
+          {isEn
+            ? 'Awards, Distinctions & Science Olympiads'
+            : 'Prêmios, Distinções & Olimpíadas Científicas'}
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {
+          awardsList.map((award) => (
+            <div class="ink-card p-6">
+              <div class="flex items-center justify-between pb-2 mb-3 border-b border-ink/30 dark:border-ink-chalk/30 text-xs font-mono">
+                <span class="font-bold">{award.issuer}</span>
+                <span class="px-2 py-0.5 bg-ink text-paper dark:bg-ink-chalk dark:text-ink-night font-bold">
+                  {award.year}
+                </span>
+              </div>
+              <h3 class="font-serif text-xl font-bold">{isEn ? award.titleEn : award.title}</h3>
+              <p class="text-sm text-ink-muted dark:text-ink-chalk/85 mt-2 leading-relaxed">
+                {isEn ? award.detailEn : award.detail}
+              </p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>

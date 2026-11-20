@@ -1,0 +1,291 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { publications, profileData } from '../data/portfolioData';
+import type { Lang } from '../i18n/routes';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = 'pt' } = Astro.props;
+const isEn = lang === 'en';
+
+const allTypes = [
+  { id: 'Todos', labelPt: 'Todos', labelEn: 'All' },
+  { id: 'Artigo em Congresso', labelPt: 'Artigo em Congresso', labelEn: 'Conference Paper' },
+  { id: 'Apresentação Oral', labelPt: 'Apresentação Oral', labelEn: 'Oral Presentation' },
+  { id: 'Trabalho Premiado', labelPt: 'Trabalho Premiado', labelEn: 'Awarded Work' },
+  { id: 'Congresso', labelPt: 'Congresso', labelEn: 'Conference' },
+];
+---
+
+<BaseLayout
+  title={isEn
+    ? 'Publications & Scientific Contributions'
+    : 'Publicações & Contribuições Científicas'}
+  description={isEn
+    ? 'Scientific contributions, conference papers, oral presentations, and awarded works by Caio Marcelo Cavallari Ruas.'
+    : 'Contribuições científicas, artigos em congressos, apresentações orais e trabalhos premiados de Caio Marcelo Cavallari Ruas.'}
+  lang={lang}
+  page="publications"
+>
+  <section class="space-y-8">
+    <!-- Archival Header -->
+    <div class="border-b-2 border-ink dark:border-ink-chalk pb-6 space-y-3">
+      <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono uppercase tracking-widest text-ink-muted dark:text-ink-chalk/70">
+        <span>
+          {isEn
+            ? 'BIBLIOGRAPHIC CATALOG • SECTION II'
+            : 'CATÁLOGO BIBLIOGRÁFICO • SECÇÃO II'}
+        </span>
+        <span>ORCID: {profileData.orcidId}</span>
+      </div>
+      <h1 class="font-serif text-4xl sm:text-5xl font-bold tracking-tight">
+        {isEn
+          ? 'Scientific Contributions & Publications'
+          : 'Contribuições à Ciência & Publicações'}
+      </h1>
+      {
+        isEn ? (
+          <p class="text-ink-muted dark:text-ink-chalk/85 max-w-3xl text-base leading-relaxed">
+            Conference papers, oral presentations, posters (PGMAT/UNESP), and research conducted at Ilum and CNPEM national laboratories. All entries include a publication link/DOI and a ready-to-copy <strong class="text-ink dark:text-ink-chalk">BibTeX</strong> citation.
+          </p>
+        ) : (
+          <p class="text-ink-muted dark:text-ink-chalk/85 max-w-3xl text-base leading-relaxed">
+            Artigos em anais de congressos, apresentações orais, pôsteres (PGMAT/UNESP) e pesquisas desenvolvidas na Ilum e nos laboratórios do CNPEM. Todos os registros contam com link/DOI para a publicação e citação <strong class="text-ink dark:text-ink-chalk">BibTeX</strong> pronta para cópia.
+          </p>
+        )
+      }
+    </div>
+
+    <!-- Filter & Search Bar in Nanquim Style -->
+    <div class="ink-card p-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+      <div class="flex flex-wrap items-center gap-2" id="pub-type-filters">
+        {
+          allTypes.map((type, idx) => (
+            <button
+              type="button"
+              data-filter-type={type.id}
+              class:list={[
+                'px-3.5 py-1.5 text-xs font-mono uppercase tracking-wider border-[1.5px] transition-all',
+                idx === 0
+                  ? 'bg-ink text-paper dark:bg-ink-chalk dark:text-ink-night border-ink dark:border-ink-chalk font-bold'
+                  : 'border-ink/40 dark:border-ink-chalk/40 text-ink-muted dark:text-ink-chalk/80 hover:border-ink dark:hover:border-ink-chalk',
+              ]}
+            >
+              <span>{isEn ? type.labelEn : type.labelPt}</span>
+            </button>
+          ))
+        }
+      </div>
+
+      <div class="relative sm:w-72">
+        <input
+          id="pub-search-input"
+          type="search"
+          placeholder={isEn ? 'Filter publications...' : 'Filtrar publicações...'}
+          class="w-full pl-9 pr-3 py-1.5 text-xs font-mono bg-paper dark:bg-ink-night border-[1.5px] border-ink dark:border-ink-chalk text-ink dark:text-ink-chalk placeholder-ink-faint focus:outline-none"
+        />
+        <svg class="w-4 h-4 text-ink-muted dark:text-ink-chalk/70 absolute left-3 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </div>
+    </div>
+
+    <!-- Publications List -->
+    <div class="space-y-8" id="publications-container">
+      {
+        publications.map((pub) => {
+          const pubVenue = isEn ? pub.venueEn : pub.venue;
+          const pubAbstract = isEn ? pub.abstractEn : pub.abstract;
+          const pubTags = isEn ? pub.tagsEn : pub.tags;
+          const pubAward = isEn ? pub.awardEn || pub.award : pub.award;
+          const pubSearch = `${pub.title} ${pubAbstract} ${pub.authors.join(' ')} ${pubTags.join(' ')} ${pub.year} ${pubVenue} ${pub.location}`.toLowerCase();
+
+          return (
+            <article
+              data-pub-card
+              data-pub-type={pub.type}
+              data-pub-search={pubSearch}
+              class="ink-card p-6 sm:p-8"
+            >
+              <!-- Top Plate Metadata -->
+              <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-4 border-b-[1.5px] border-ink dark:border-ink-chalk text-xs font-mono">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="inline-block p-[3px] crosshatch-pattern border border-ink dark:border-ink-chalk">
+                    <span class="block px-2 py-0.5 bg-paper-light dark:bg-ink-nightCard border border-ink/70 dark:border-ink-chalk/70 font-bold">
+                      {isEn ? pub.plateNumberEn : pub.plateNumber}
+                    </span>
+                  </span>
+                  <span class="uppercase tracking-wider font-semibold">
+                    {isEn ? pub.typeEn : pub.type}
+                  </span>
+                  <span>&bull;</span>
+                  <span>{pub.year}</span>
+                </div>
+
+                {pubAward ? (
+                  <span class="px-2.5 py-0.5 bg-ink text-paper dark:bg-ink-chalk dark:text-ink-night font-bold text-[11px]">
+                    ★ {pubAward}
+                  </span>
+                ) : (
+                  <span class="text-ink-faint">REF: {pub.doiCode}</span>
+                )}
+              </div>
+
+              <h2 class="font-serif text-2xl sm:text-3xl font-bold leading-snug">{pub.title}</h2>
+
+              <p class="text-xs sm:text-sm font-mono text-ink-muted dark:text-ink-chalk/80 mt-2">
+                <strong class="text-ink dark:text-ink-chalk">{pub.authors.join('; ')}</strong>
+              </p>
+              <p class="text-xs font-mono italic text-ink-muted dark:text-ink-chalk/70 mt-0.5">
+                {pubVenue} &mdash; {pub.location}, {pub.year}.
+              </p>
+
+              <p class="text-sm sm:text-base text-ink-muted dark:text-ink-chalk/85 mt-4 leading-relaxed">
+                <strong class="font-mono text-xs uppercase tracking-wider text-ink dark:text-ink-chalk">
+                  {isEn ? 'Abstract: ' : 'Síntese: '}
+                </strong>
+                <span>{pubAbstract}</span>
+              </p>
+
+              <!-- Tags & Action Buttons (DOI, Repositório, BibTeX) -->
+              <div class="mt-6 pt-4 border-t border-ink/30 dark:border-ink-chalk/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="flex flex-wrap gap-1.5">
+                  {pubTags.map((tag) => (
+                    <span class="text-[11px] font-mono px-2.5 py-0.5 border border-ink/50 dark:border-ink-chalk/50">
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2.5">
+                  {pub.repoUrl && (
+                    <a
+                      href={pub.repoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="ink-btn px-3.5 py-1.5 text-xs font-mono font-bold uppercase tracking-wider inline-flex items-center gap-1.5"
+                    >
+                      <span>{isEn ? 'Repository' : 'Repositório'}</span>
+                      <span>&nearr;</span>
+                    </a>
+                  )}
+
+                  {pub.doiUrl && (
+                    <a
+                      href={pub.doiUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="ink-btn px-3.5 py-1.5 text-xs font-mono font-bold uppercase tracking-wider inline-flex items-center gap-1.5"
+                    >
+                      <span>[Link / DOI]</span>
+                      <span>&nearr;</span>
+                    </a>
+                  )}
+
+                  <!-- BibTeX Toggle Button -->
+                  <button
+                    type="button"
+                    data-bibtex-toggle={pub.id}
+                    class="ink-btn-primary px-3.5 py-1.5 text-xs font-mono font-bold uppercase tracking-wider inline-flex items-center gap-1.5"
+                  >
+                    <span>[BibTeX]</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Collapsible BibTeX Drawer -->
+              <div
+                id={`bibtex-panel-${pub.id}`}
+                class="hidden mt-4 pt-4 border-t-[1.5px] border-dashed border-ink dark:border-ink-chalk"
+              >
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-xs font-mono uppercase tracking-wider">
+                    {isEn ? 'BibTeX Entry for LaTeX:' : 'Entrada BibTeX para LaTeX:'}
+                  </span>
+                  <button
+                    type="button"
+                    data-copy-bibtex={pub.bibtex}
+                    class="ink-btn px-3 py-1 text-xs font-mono uppercase font-bold"
+                  >
+                    <span>{isEn ? 'Copy BibTeX' : 'Copiar BibTeX'}</span>
+                  </button>
+                </div>
+                <pre class="p-4 border border-ink dark:border-ink-chalk bg-paper dark:bg-ink-night text-ink dark:text-ink-chalk text-xs font-mono overflow-x-auto leading-relaxed"><code>{pub.bibtex}</code></pre>
+              </div>
+            </article>
+          );
+        })
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  function initPublicationsPage() {
+    let activeType = 'Todos';
+    const searchInput = document.getElementById('pub-search-input') as HTMLInputElement | null;
+    const filterButtons = document.querySelectorAll('[data-filter-type]');
+    const cards = document.querySelectorAll('[data-pub-card]');
+
+    function filterPublications() {
+      const query = (searchInput?.value || '').trim().toLowerCase();
+      cards.forEach((card) => {
+        const type = card.getAttribute('data-pub-type') || '';
+        const searchContent = card.getAttribute('data-pub-search') || '';
+        const matchesType = activeType === 'Todos' || type === activeType;
+        const matchesQuery = !query || searchContent.includes(query);
+
+        if (matchesType && matchesQuery) {
+          (card as HTMLElement).style.display = '';
+        } else {
+          (card as HTMLElement).style.display = 'none';
+        }
+      });
+    }
+
+    filterButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        activeType = btn.getAttribute('data-filter-type') || 'Todos';
+        filterButtons.forEach((b) => {
+          const isSelected = b.getAttribute('data-filter-type') === activeType;
+          b.className = isSelected
+            ? 'px-3.5 py-1.5 text-xs font-mono uppercase tracking-wider border-[1.5px] transition-all bg-ink text-paper dark:bg-ink-chalk dark:text-ink-night border-ink dark:border-ink-chalk font-bold'
+            : 'px-3.5 py-1.5 text-xs font-mono uppercase tracking-wider border-[1.5px] transition-all border-ink/40 dark:border-ink-chalk/40 text-ink-muted dark:text-ink-chalk/80 hover:border-ink dark:hover:border-ink-chalk';
+        });
+        filterPublications();
+      });
+    });
+
+    searchInput?.addEventListener('input', filterPublications);
+
+    document.querySelectorAll('[data-bibtex-toggle]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-bibtex-toggle');
+        const panel = document.getElementById(`bibtex-panel-${id}`);
+        panel?.classList.toggle('hidden');
+      });
+    });
+
+    document.querySelectorAll('[data-copy-bibtex]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const bibtex = btn.getAttribute('data-copy-bibtex') || '';
+        try {
+          await navigator.clipboard.writeText(bibtex);
+          btn.querySelectorAll('span').forEach((s) => {
+            const orig = s.textContent;
+            s.textContent = '✓';
+            setTimeout(() => {
+              s.textContent = orig;
+            }, 1800);
+          });
+        } catch {
+          // Ignore clipboard error
+        }
+      });
+    });
+  }
+
+  document.addEventListener('astro:page-load', initPublicationsPage);
+</script>

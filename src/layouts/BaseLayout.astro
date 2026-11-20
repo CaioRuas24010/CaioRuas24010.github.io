@@ -3,20 +3,36 @@ import { ViewTransitions } from 'astro:transitions';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import InteractiveBackground from '../components/InteractiveBackground.astro';
+import { getAlternateUrls, type Lang, type PageKey } from '../i18n/routes';
 import 'katex/dist/katex.min.css';
 
 interface Props {
   title: string;
   description?: string;
+  lang?: Lang;
+  page: PageKey;
 }
 
 const {
   title,
-  description = 'Portfólio Acadêmico e de Projetos de Caio Marcelo Cavallari Ruas (Caio Cavallari Ruas) — Ilum Escola de Ciência (CNPEM). Física de Materiais, Matemática Aplicada, Hackathons, GitHub e Ciência Cidadã.',
+  description,
+  lang = 'pt',
+  page,
 } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://caioruas24010.github.io');
-const socialImageURL = new URL('/foto-perfil.jpg', Astro.site || 'https://caioruas24010.github.io');
+const isEn = lang === 'en';
+const htmlLang = isEn ? 'en' : 'pt-BR';
+
+const resolvedDescription =
+  description ??
+  (isEn
+    ? 'Academic and project portfolio of Caio Marcelo Cavallari Ruas (Caio Cavallari Ruas) — Ilum School of Science (CNPEM). Materials Physics, Applied Mathematics, Hackathons, GitHub, and Citizen Science.'
+    : 'Portfólio Acadêmico e de Projetos de Caio Marcelo Cavallari Ruas (Caio Cavallari Ruas) — Ilum Escola de Ciência (CNPEM). Física de Materiais, Matemática Aplicada, Hackathons, GitHub e Ciência Cidadã.');
+
+const siteBase = Astro.site || 'https://caioruas24010.github.io';
+const { pt: ptURL, en: enURL } = getAlternateUrls(page, siteBase);
+const canonicalURL = isEn ? enURL : ptURL;
+const socialImageURL = new URL('/foto-perfil.jpg', siteBase);
 
 const personJsonLd = {
   '@context': 'https://schema.org',
@@ -31,16 +47,21 @@ const personJsonLd = {
   url: 'https://caioruas24010.github.io',
   image: socialImageURL.toString(),
   email: 'mailto:caio24010@ilum.cnpem.br',
-  jobTitle: 'Bacharelando em Ciência e Tecnologia & Treinador Oficial IASC / Caça Asteroides MCTI',
+  inLanguage: htmlLang,
+  jobTitle: isEn
+    ? 'B.Sc. Student in Science and Technology & Official Trainer at IASC / MCTI Asteroid Hunt'
+    : 'Bacharelando em Ciência e Tecnologia & Treinador Oficial IASC / Caça Asteroides MCTI',
   affiliation: [
     {
       '@type': 'CollegeOrUniversity',
-      name: 'Ilum Escola de Ciência — CNPEM',
+      name: isEn ? 'Ilum — School of Science (CNPEM)' : 'Ilum Escola de Ciência — CNPEM',
       url: 'https://ilum.cnpem.br',
     },
     {
       '@type': 'ResearchOrganization',
-      name: 'Centro Nacional de Pesquisa em Energia e Materiais (CNPEM)',
+      name: isEn
+        ? 'Brazilian Center for Research in Energy and Materials (CNPEM)'
+        : 'Centro Nacional de Pesquisa em Energia e Materiais (CNPEM)',
       url: 'https://cnpem.br',
     },
   ],
@@ -49,54 +70,74 @@ const personJsonLd = {
     'https://orcid.org/0009-0009-4474-1672',
     'http://lattes.cnpq.br/4924298812121535',
   ],
-  knowsAbout: [
-    'Física de Materiais',
-    'Óxido de Grafeno',
-    'Espaços Normados',
-    'Teoria dos Grafos',
-    'Computação Científica',
-    'Inteligência Artificial',
-    'Astronomia e Ciência Cidadã',
-  ],
+  knowsAbout: isEn
+    ? [
+        'Materials Physics',
+        'Graphene Oxide',
+        'Normed Spaces',
+        'Graph Theory',
+        'Scientific Computing',
+        'Artificial Intelligence',
+        'Astronomy and Citizen Science',
+      ]
+    : [
+        'Física de Materiais',
+        'Óxido de Grafeno',
+        'Espaços Normados',
+        'Teoria dos Grafos',
+        'Computação Científica',
+        'Inteligência Artificial',
+        'Astronomia e Ciência Cidadã',
+      ],
 };
 ---
 
 <!doctype html>
-<html lang="pt-BR" class="scroll-smooth">
+<html lang={htmlLang} class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={canonicalURL} />
+    <link rel="alternate" hreflang="pt-BR" href={ptURL} />
+    <link rel="alternate" hreflang="en" href={enURL} />
+    <link rel="alternate" hreflang="x-default" href={ptURL} />
     <meta name="generator" content={Astro.generator} />
     <meta name="google-site-verification" content="vM0xC0XCpKGOLgELBFPAoR81f4bp6nMNnW0rJJADGy0" />
 
     <!-- Primary SEO Meta Tags -->
     <title>{title} — Caio Marcelo Cavallari Ruas (Caio Ruas)</title>
     <meta name="title" content={`${title} — Caio Marcelo Cavallari Ruas (Caio Ruas)`} />
-    <meta name="description" content={description} />
+    <meta name="description" content={resolvedDescription} />
     <meta name="author" content="Caio Marcelo Cavallari Ruas" />
     <meta
       name="keywords"
-      content="Caio Marcelo Cavallari Ruas, Caio Cavallari Ruas, Caio Ruas, CaioRuas24010, Caio Ruas GitHub, Ilum Escola de Ciência, CNPEM, Física de Materiais, Espaços Normados, IASC Caça Asteroides, Portfólio Acadêmico"
+      content={isEn
+        ? 'Caio Marcelo Cavallari Ruas, Caio Cavallari Ruas, Caio Ruas, CaioRuas24010, Caio Ruas GitHub, Ilum School of Science, CNPEM, Materials Physics, Normed Spaces, IASC Asteroid Hunt, Academic Portfolio'
+        : 'Caio Marcelo Cavallari Ruas, Caio Cavallari Ruas, Caio Ruas, CaioRuas24010, Caio Ruas GitHub, Ilum Escola de Ciência, CNPEM, Física de Materiais, Espaços Normados, IASC Caça Asteroides, Portfólio Acadêmico'}
     />
     <meta name="robots" content="index, follow" />
 
     <!-- Open Graph / WhatsApp / LinkedIn -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />
-    <meta property="og:site_name" content="Caio Marcelo Cavallari Ruas — Portfólio & Súmula" />
+    <meta
+      property="og:site_name"
+      content={isEn
+        ? 'Caio Marcelo Cavallari Ruas — Portfolio & CV'
+        : 'Caio Marcelo Cavallari Ruas — Portfólio & Súmula'}
+    />
     <meta property="og:title" content={`${title} — Caio Marcelo Cavallari Ruas`} />
-    <meta property="og:description" content={description} />
+    <meta property="og:description" content={resolvedDescription} />
     <meta property="og:image" content={socialImageURL} />
-    <meta property="og:locale" content="pt_BR" />
-    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:locale" content={isEn ? 'en_US' : 'pt_BR'} />
+    <meta property="og:locale:alternate" content={isEn ? 'pt_BR' : 'en_US'} />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content={canonicalURL} />
     <meta name="twitter:title" content={`${title} — Caio Marcelo Cavallari Ruas`} />
-    <meta name="twitter:description" content={description} />
+    <meta name="twitter:description" content={resolvedDescription} />
     <meta name="twitter:image" content={socialImageURL} />
 
     <!-- Schema.org JSON-LD (Google Knowledge Graph for Person + GitHub/ORCID/Lattes) -->
@@ -113,32 +154,21 @@ const personJsonLd = {
     <!-- Astro View Transitions -->
     <ViewTransitions />
 
-    <!-- Theme & Language initialization (runs immediately to avoid FOUC and persists across View Transitions) -->
+    <!-- Theme initialization (runs immediately to avoid FOUC and persists across View Transitions) -->
     <script is:inline>
-      function applyPreferences() {
+      function applyThemePreference() {
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme === 'dark') {
           document.documentElement.classList.add('dark');
         } else {
           document.documentElement.classList.remove('dark');
         }
-        const savedLang = localStorage.getItem('lang') || 'pt';
-        document.documentElement.setAttribute('data-lang', savedLang);
-        document.documentElement.setAttribute('lang', savedLang === 'en' ? 'en' : 'pt-BR');
       }
-      applyPreferences();
-      document.addEventListener('astro:after-swap', applyPreferences);
+      applyThemePreference();
+      document.addEventListener('astro:after-swap', applyThemePreference);
     </script>
 
     <style is:global>
-      /* Bilingual Instant Toggle Rules (PT-BR / EN) */
-      html:not([data-lang="en"]) .lang-en {
-        display: none !important;
-      }
-      html[data-lang="en"] .lang-pt {
-        display: none !important;
-      }
-
       :root {
         --ink: #121211;
         --ink-soft: rgba(18, 18, 17, 0.22);
@@ -345,10 +375,10 @@ const personJsonLd = {
     </svg>
 
     <InteractiveBackground />
-    <Navbar />
+    <Navbar lang={lang} page={page} />
     <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12">
       <slot />
     </main>
-    <Footer />
+    <Footer lang={lang} />
   </body>
 </html>
